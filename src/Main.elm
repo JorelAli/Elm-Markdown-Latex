@@ -3,14 +3,12 @@ module Main exposing (..)
 --Main code goes here
 
 import Browser
-import Html exposing (Html, Attribute, div, input, textarea, text, button)
+import Html exposing (Html, Attribute, div, input, textarea, text, button, p)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onInput, onClick)
 
 import Markdown.Block exposing (..)
 import Markdown.Inline exposing (..)
-
-import Markdown.Block
 
 -- MAIN
 main =
@@ -42,13 +40,11 @@ update msg model =
 generateLatex : String -> String
 generateLatex content = 
   let latexBody = Markdown.Block.parse Nothing content |> renderBlocks
-      latexHeader = """
-\\documentclass{article}
-%\\usepackage{ulem}     %Used for strikethrough
-\\usepackage{hyperref} %Used for hyperlink creation
-\usepackage[parfill]{parskip}
-\\usepackage{listings}
-\\usepackage{xcolor}
+      latexHeader = """\\documentclass{article}
+\\usepackage{hyperref}         %Used for hyperlink creation
+\\usepackage[parfill]{parskip} %Paragraph formatting
+\\usepackage{listings}         %Code blocks
+\\usepackage{xcolor}           %Code block colors
 \\lstdefinestyle{customc}{
   belowcaptionskip=1\\baselineskip,
   breaklines=true,
@@ -103,7 +99,7 @@ renderListBlock listBlock contents =
     header = 
       case listBlock.type_ of
         Unordered -> "\\begin{itemize}\n"
-        Ordered start -> "\\begin{enumerate}\n\\setcounter{enumi}{" ++ String.fromInt start ++ "}\n"
+        Ordered start -> "\\begin{enumerate}\n\\setcounter{enumi}{" ++ String.fromInt (start - 1) ++ "}\n"
     content = (List.map (\line -> "\\item " ++ line ++ "\n") contents |> String.concat)
     footer = "\\end{" ++ type_ ++ "}\n"
   in
@@ -149,7 +145,13 @@ view : Model -> Html Msg
 view model =
   div []
     [ 
-      textarea [ placeholder "Markdown Text", value model.mdIn, onInput Change, rows 25, cols 80 ] []
-      , textarea [ rows 40, cols 80 ] [ text (model.latexOut) ]
+      div [ id "container" ] [
+        div [ class "alert alert-primary" ] [ text "Enter markdown here" ]
+        , textarea [ value model.mdIn, onInput Change, rows 25, id "md", class "form-control" ] []
+      ],
+      div [ id "container" ] [
+        div [ class "alert alert-primary" ] [ text "Get LaTeX here" ]
+        , textarea [ rows 25, id "latex", readonly True, class "form-control" ] [ text (model.latexOut) ]
+      ]
     ]
 
