@@ -9,11 +9,6 @@ import Html.Events exposing (onInput, onClick)
 
 import Markdown.Block exposing (..)
 import Markdown.Inline exposing (..)
---import Markdown.Elm
---import Markdown.Option
---import Parse exposing (BlockContent)
---import MDInline exposing (..)
---import Tree exposing (Tree)
 
 import Markdown.Block
 
@@ -44,20 +39,29 @@ update msg model =
     Change newContent ->
       { model | mdIn = newContent, latexOut = generateLatex newContent }
 
-{-
-Package appendices:
-
-
-
--}
-
 generateLatex : String -> String
 generateLatex content = 
-  let latexBody = Markdown.Block.parse Nothing content |> renderBlocks --Parse.toMDBlockTree Markdown.Option.Extended content |> convertMDBlocksToString
+  let latexBody = Markdown.Block.parse Nothing content |> renderBlocks
       latexHeader = """
 \\documentclass{article}
-\\usepackage{ulem}     %Used for strikethrough
+%\\usepackage{ulem}     %Used for strikethrough
 \\usepackage{hyperref} %Used for hyperlink creation
+\\usepackage{listings}
+\\usepackage{xcolor}
+\\lstdefinestyle{customc}{
+  belowcaptionskip=1\\baselineskip,
+  breaklines=true,
+  frame=L,
+  xleftmargin=\\parindent,
+  language=C,
+  showstringspaces=false,
+  basicstyle=\\footnotesize\\ttfamily,
+  keywordstyle=\\bfseries\\color{green!40!black},
+  commentstyle=\\itshape\\color{purple!40!black},
+  identifierstyle=\\color{blue},
+  stringstyle=\\color{orange},
+}
+\\lstset{style=customc}
 
 \\begin{document}
 """
@@ -76,6 +80,34 @@ renderHeading depth content =
     4 -> "\\subsubsection{" ++ renderInlines content ++ "}" --...
     _ -> "" --Oops 
 
+renderCodeBlock : CodeBlock -> String -> String
+renderCodeBlock codeBlock code =
+  case codeBlock of
+    Indented -> code
+    Fenced isOpen fence -> 
+      "\\begin{lstlisting}" ++
+        (case fence.language of
+          Nothing -> "\n"
+          Just language -> "[language=" ++ language ++ "]\n")
+      ++ code
+      ++ "\n\\end{lstlisting}\n"
+
+renderListBlock : ListBlock -> List String -> String
+renderListBlock listBlock contents = 
+  let 
+    type_ = 
+      case listBlock.type_ of  
+        Unordered -> "itemize"
+        Ordered _ -> "enumerate"
+    header = 
+      case listBlock.type_ of
+        Unordered -> "\\begin{itemize}\n"
+        Ordered start -> "\\begin{enumerate}\n\\setcounter{enumi}{" ++ String.fromInt start ++ "}\n"
+    content = (List.map (\line -> "\\item " ++ line ++ "\n") contents |> String.concat)
+    footer = "\\end{" ++ type_ ++ "}\n"
+  in
+    header ++ content ++ footer
+
 renderBlocks : List (Block b i) -> String
 renderBlocks blocks = List.map renderBlock blocks |> String.concat
 
@@ -83,13 +115,13 @@ renderBlock : Block b i -> String
 renderBlock block = 
   case block of
     BlankLine str -> "\n\n"
-    ThematicBreak -> "break"
+    ThematicBreak -> "\\rule{\\textwidth}{0.4pt}"
     Heading _ level inlines -> renderHeading level inlines
-    CodeBlock _ _ -> "codeblock"
+    CodeBlock codeBlock code -> renderCodeBlock codeBlock code --"codeblock: " ++ code
     Paragraph _ content -> renderInlines content
-    BlockQuote content -> "blockQuote: " ++ (renderBlocks content)
-    List _ _ -> "lst"
-    PlainInlines _ -> "inlines"
+    BlockQuote content -> "\\begin{quote}\n" ++ (renderBlocks content) ++ "\n\\end{quote}"
+    List listBlock contents -> renderListBlock listBlock (List.map renderBlocks contents)
+    PlainInlines inlines -> renderInlines inlines
     Markdown.Block.Custom _ _ -> "custom"
 
 renderInlines : List (Inline i) -> String
@@ -108,39 +140,8 @@ renderInline inline =
       case length of 
         1 -> "\\textif{" ++ renderInlines content ++ "}" --italics
         2 -> "\\textbf{" ++ renderInlines content ++ "}" --bold
-        _ -> "wat"
+        _ -> renderInlines content
     Markdown.Inline.Custom _ _ -> "custom"
-
--- convertMDBlocksToString : Tree Parse.MDBlock -> String
--- convertMDBlocksToString tree =
---   String.concat (List.map convertMDBlock (Tree.flatten tree))
--- 
--- convertMDBlock : Parse.MDBlock -> String
--- convertMDBlock mdBlock = 
---   case mdBlock of
---     Parse.MDBlock blockType level content -> 
---       case content of
---         Parse.M inline -> convertMDInline inline
---         Parse.T string -> string
--- 
--- convertMDInline : MDInline -> String
--- convertMDInline inline =
---   case inline of
---     OrdinaryText str      -> str
---     ItalicText str        -> "\\textit{" ++ str ++ "}"
---     BoldText str          -> "\\textbf{" ++ str ++ "}"
---     Code str              -> "\\verb|" ++ str ++ "|" --TODO: Handle | characters in code
---     InlineMath str        -> "$" ++ str ++ "$"
---     StrikeThroughText str -> "STRK: " ++ str --"\\sout{" ++ str ++ "}"
---     BracketedText str     -> "[" ++ str ++ "]"
---     Link text url         -> "\\href{" ++ url ++ "}{" ++ text ++ "}"
---     Image url text        -> "img: " ++ url ++ ", " ++ text
---     Line list             -> String.concat (List.map convertMDInline list)
---     Paragraph list        -> "\n\n" ++ String.concat (List.map convertMDInline list)
---     Stanza str            -> "stanza:" ++ str
---     Error list            -> "err"
-
-
 
 -- VIEW
 view : Model -> Html Msg
@@ -148,6 +149,6 @@ view model =
   div []
     [ 
       textarea [ placeholder "Markdown Text", value model.mdIn, onInput Change, rows 25, cols 80 ] []
-      , textarea [ rows 25, cols 80 ] [ text (model.latexOut) ]
+      , textarea [ rows 40, cols 80 ] [ text (model.latexOut) ]
     ]
 
