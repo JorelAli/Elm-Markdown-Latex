@@ -9335,7 +9335,7 @@ var $author$project$Main$renderBlocks = function (blocks) {
 		A2($elm$core$List$map, $author$project$Main$renderBlock, blocks));
 };
 var $author$project$Main$generateLatex = function (content) {
-	var latexHeader = '\\documentclass{article}\n%\\usepackage{ulem}     %Used for strikethrough\n\\usepackage{hyperref} %Used for hyperlink creation\n\\usepackage[parfill]{parskip}\n\\usepackage{listings}\n\\usepackage{xcolor}\n\\lstdefinestyle{customc}{\n  belowcaptionskip=1\\baselineskip,\n  breaklines=true,\n  frame=L,\n  xleftmargin=\\parindent,\n  language=C,\n  showstringspaces=false,\n  basicstyle=\\footnotesize\\ttfamily,\n  keywordstyle=\\bfseries\\color{green!40!black},\n  commentstyle=\\itshape\\color{purple!40!black},\n  identifierstyle=\\color{blue},\n  stringstyle=\\color{orange},\n}\n\\lstset{style=customc}\n\n\\begin{document}\n';
+	var latexHeader = '\\documentclass{article}\n\\usepackage{hyperref}         %Used for hyperlink creation\n\\usepackage[parfill]{parskip} %Paragraph formatting\n\\usepackage{listings}         %Code blocks\n\\usepackage{xcolor}           %Code block colors\n\\lstdefinestyle{customc}{\n  belowcaptionskip=1\\baselineskip,\n  breaklines=true,\n  frame=L,\n  xleftmargin=\\parindent,\n  language=C,\n  showstringspaces=false,\n  basicstyle=\\footnotesize\\ttfamily,\n  keywordstyle=\\bfseries\\color{green!40!black},\n  commentstyle=\\itshape\\color{purple!40!black},\n  identifierstyle=\\color{blue},\n  stringstyle=\\color{orange},\n}\n\\lstset{style=customc}\n\n\\begin{document}\n';
 	var latexFooter = '\n\\end{document}\n      ';
 	var latexBody = $author$project$Main$renderBlocks(
 		A2($pablohirafuji$elm_markdown$Markdown$Block$parse, $elm$core$Maybe$Nothing, content));
