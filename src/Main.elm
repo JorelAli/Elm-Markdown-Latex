@@ -46,6 +46,7 @@ generateLatex content =
 \\documentclass{article}
 %\\usepackage{ulem}     %Used for strikethrough
 \\usepackage{hyperref} %Used for hyperlink creation
+\usepackage[parfill]{parskip}
 \\usepackage{listings}
 \\usepackage{xcolor}
 \\lstdefinestyle{customc}{

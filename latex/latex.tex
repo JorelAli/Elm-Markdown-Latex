@@ -20,13 +20,304 @@
 \lstset{style=customc}
 
 \begin{document}
+\rule{\textwidth}{0.4pt}\textbf{Advertisement :)}
+
 \begin{itemize}
-\item hello
+\item \textbf{\href{https://nodeca.github.io/pica/demo/}{pica}} - high quality and fast image
+resize in browser.
+\item \textbf{\href{https://github.com/nodeca/babelfish/}{babelfish}} - developer friendly
+i18n with plurals support and easy syntax.
 
 
 \end{itemize}
-\section{bold}
+You will like those projects!
 
-other stufstart
+\rule{\textwidth}{0.4pt}
+
+\section{h1 Heading 8-)}\subsection{h2 Heading}\subsubsection{h3 Heading}\subsubsection{h4 Heading}
+
+
+
+\subsection{Horizontal Rules}
+
+\rule{\textwidth}{0.4pt}
+
+\rule{\textwidth}{0.4pt}
+
+\rule{\textwidth}{0.4pt}
+
+
+
+\subsection{Typographic replacements}
+
+Enable typographer option to see result.
+
+(c) (C) (r) (R) (tm) (TM) (p) (P) +-
+
+test.. test... test..... test?..... test!....
+
+!!!!!! ???? ,,  -- ---
+
+"Smartypants, double quotes" and 'single quotes'
+
+
+
+\subsection{Emphasis}
+
+\textbf{This is bold text}
+
+\textbf{This is bold text}
+
+\textif{This is italic text}
+
+\textif{This is italic text}
+
+~~Strikethrough~~
+
+
+
+\subsection{Blockquotes}
+
+
+
+\begin{quote}
+Blockquotes can also be nested...\begin{quote}
+...by using additional greater-than signs right next to each other...\begin{quote}
+...or with spaces between arrows.
+\end{quote}
+\end{quote}
+\end{quote}
+
+
+
+\subsection{Lists}
+
+Unordered
+
+\begin{itemize}
+\item Create a list by starting a line with \verb|+|, \verb|-|, or \verb|*|
+\item Sub-lists are made by indenting 2 spaces:\begin{itemize}
+\item Marker character change forces new list start:\begin{itemize}
+\item Ac tristique libero volutpat at
+\end{itemize}
+\begin{itemize}
+\item Facilisis in pretium nisl aliquet
+\end{itemize}
+\begin{itemize}
+\item Nulla volutpat aliquam velit
+\end{itemize}
+
+\end{itemize}
+
+\item Very easy!
+
+
+\end{itemize}
+Ordered
+
+\begin{enumerate}
+\setcounter{enumi}{1}
+\item Lorem ipsum dolor sit amet
+\item Consectetur adipiscing elit
+\item Integer molestie lorem at massa
+
+
+
+
+\item You can use sequential numbers...
+\item ...or keep all the numbers as \verb|1.|
+
+
+\end{enumerate}
+Start numbering with offset:
+
+\begin{enumerate}
+\setcounter{enumi}{57}
+\item foo
+\item bar
+
+
+
+
+\end{enumerate}
+\subsection{Code}
+
+Inline \verb|code|
+
+Indented code
+
+// Some comments
+line 1 of code
+line 2 of code
+line 3 of code
+
+
+
+
+Block code "fences"
+
+\begin{lstlisting}
+Sample text here...
+
+\end{lstlisting}
+
+
+Syntax highlighting
+
+\begin{lstlisting}[language=js]
+var foo = function (bar) {
+  return bar++;
+};
+
+console.log(foo(5));
+
+\end{lstlisting}
+
+
+\subsection{Tables}
+
+| Option | Description |
+| ------ | ----------- |
+| data   | path to data files to supply the data that will be passed into templates. |
+| engine | engine to be used for processing templates. Handlebars is the default. |
+| ext    | extension to be used for dest files. |
+
+Right aligned columns
+
+| Option | Description |
+| ------:| -----------:|
+| data   | path to data files to supply the data that will be passed into templates. |
+| engine | engine to be used for processing templates. Handlebars is the default. |
+| ext    | extension to be used for dest files. |
+
+
+
+\subsection{Links}
+
+\href{http://dev.nodeca.com}{link text}
+
+\href{http://nodeca.github.io/pica/demo/}{link with title}
+
+Autoconverted link https://github.com/nodeca/pica (enable linkify to see)
+
+
+
+\subsection{Images}
+
+img
+img
+
+Like links, Images also have a footnote style syntax
+
+img
+
+With a reference later in the document defining the URL location:
+
+
+
+
+
+\subsection{Plugins}
+
+The killer feature of \verb|markdown-it| is very effective support of
+\href{https://www.npmjs.org/browse/keyword/markdown-it-plugin}{syntax plugins}.
+
+
+
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-emoji}{Emojies}}
+
+\begin{quote}
+Classic markup: :wink: :crush: :cry: :tear: :laughing: :yum:
+
+Shortcuts (emoticons): :-) :-( 8-) ;)
+\end{quote}
+
+see \href{https://github.com/markdown-it/markdown-it-emoji#change-output}{how to change output} with twemoji.
+
+
+
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-sub}{Subscript} / \href{https://github.com/markdown-it/markdown-it-sup}{Superscript}}
+
+\begin{itemize}
+\item 19^th^
+\item H~2~O
+
+
+
+
+\end{itemize}
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-ins}{<ins>}}
+
+++Inserted text++
+
+
+
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-mark}{<mark>}}
+
+==Marked text==
+
+
+
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-footnote}{Footnotes}}
+
+Footnote 1 link[^first].
+
+Footnote 2 link[^second].
+
+Inline footnote^[Text of inline footnote] definition.
+
+Duplicated footnote reference[^second].
+
+[^first]: Footnote \textbf{can have markup}
+
+and multiple paragraphs.
+
+
+[^second]: Footnote text.
+
+
+
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-deflist}{Definition lists}}
+
+Term 1
+
+:   Definition 1
+with lazy continuation.
+
+Term 2 with \textif{inline markup}
+
+:   Definition 2
+
+    { some code, part of Definition 2 }
+
+Third paragraph of definition 2.
+
+
+\textif{Compact style:}
+
+Term 1
+~ Definition 1
+
+Term 2
+~ Definition 2a
+~ Definition 2b
+
+
+
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-abbr}{Abbreviations}}
+
+This is HTML abbreviation example.
+
+It converts "HTML", but keep intact partial entries like "xxxHTMLyyy" and so on.
+
+*[HTML]: Hyper Text Markup Language
+
+\subsubsection{\href{https://github.com/markdown-it/markdown-it-container}{Custom containers}}
+
+::: warning
+\textif{here be dragons}
+:::
+
+
 \end{document}
       
