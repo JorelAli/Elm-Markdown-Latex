@@ -3,9 +3,9 @@ module Main exposing (..)
 --Main code goes here
 
 import Browser
-import Html exposing (Html, Attribute, div, input, textarea, text, button, p)
+import Html exposing (Html, div, textarea, text)
 import Html.Attributes exposing (..)
-import Html.Events exposing (onInput, onClick)
+import Html.Events exposing (onInput)
 
 import Markdown.Block exposing (..)
 import Markdown.Inline exposing (..)
@@ -59,6 +59,7 @@ generateLatex content =
   stringstyle=\\color{orange},
 }
 \\lstset{style=customc}
+\\setcounter{secnumdepth}{5}
 
 \\begin{document}
 """
@@ -71,17 +72,17 @@ generateLatex content =
 renderHeading : Int -> List (Inline i) -> String
 renderHeading depth content =
   case depth of
-    1 -> "\\section{" ++ renderInlines content ++ "}"
-    2 -> "\\subsection{" ++ renderInlines content ++ "}"
-    3 -> "\\subsubsection{" ++ renderInlines content ++ "}"
-    4 -> "\\subsubsection{" ++ renderInlines content ++ "}" --...
+    1 -> "\\section{" ++ renderInlines content ++ "}\n"
+    2 -> "\\subsection{" ++ renderInlines content ++ "}\n"
+    3 -> "\\subsubsection{" ++ renderInlines content ++ "}\n"
+    4 -> "\\paragraph{" ++ renderInlines content ++ "}\\mbox{}\\\\\n" --...
     _ -> "" --Oops 
 
 renderCodeBlock : CodeBlock -> String -> String
 renderCodeBlock codeBlock code =
   case codeBlock of
     Indented -> code
-    Fenced isOpen fence -> 
+    Fenced _ fence -> 
       "\\begin{lstlisting}" ++
         (case fence.language of
           Nothing -> "\n"
@@ -100,7 +101,7 @@ renderListBlock listBlock contents =
       case listBlock.type_ of
         Unordered -> "\\begin{itemize}\n"
         Ordered start -> "\\begin{enumerate}\n\\setcounter{enumi}{" ++ String.fromInt (start - 1) ++ "}\n"
-    content = (List.map (\line -> "\\item " ++ line ++ "\n") contents |> String.concat)
+    content = List.map (\line -> "\\item " ++ line ++ "\n") contents |> String.concat
     footer = "\\end{" ++ type_ ++ "}\n"
   in
     header ++ content ++ footer
@@ -111,12 +112,12 @@ renderBlocks blocks = List.map renderBlock blocks |> String.concat
 renderBlock : Block b i -> String
 renderBlock block = 
   case block of
-    BlankLine str -> "\n\n"
+    BlankLine _ -> "\n\n"
     ThematicBreak -> "\\rule{\\textwidth}{0.4pt}"
     Heading _ level inlines -> renderHeading level inlines
     CodeBlock codeBlock code -> renderCodeBlock codeBlock code --"codeblock: " ++ code
     Paragraph _ content -> renderInlines content
-    BlockQuote content -> "\\begin{quote}\n" ++ (renderBlocks content) ++ "\n\\end{quote}"
+    BlockQuote content -> "\\begin{quote}\n" ++ renderBlocks content ++ "\n\\end{quote}"
     List listBlock contents -> renderListBlock listBlock (List.map renderBlocks contents)
     PlainInlines inlines -> renderInlines inlines
     Markdown.Block.Custom _ _ -> "custom"
@@ -131,7 +132,7 @@ renderInline inline =
     HardLineBreak -> "brk"
     CodeInline str -> "\\verb|" ++ str ++ "|"
     Link url _ inlines -> "\\href{" ++ url ++ "}{" ++ renderInlines inlines ++ "}"
-    Image src _ _ -> "img"
+    Image _ _ _ -> "img"
     HtmlInline _ _ _ -> "inlineHTML"
     Emphasis length content -> 
       case length of 
@@ -151,7 +152,7 @@ view model =
       ],
       div [ id "container" ] [
         div [ class "alert alert-primary" ] [ text "Get LaTeX here" ]
-        , textarea [ rows 25, id "latex", readonly True, class "form-control" ] [ text (model.latexOut) ]
+        , textarea [ rows 25, id "latex", readonly True, class "form-control" ] [ text model.latexOut ]
       ]
     ]
 
